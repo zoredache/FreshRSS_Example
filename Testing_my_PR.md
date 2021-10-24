@@ -20,7 +20,7 @@ cron entry is added for root only if CRON_MIN is set
 
 
 Test Alpine. Alpine uses /etc/crontabs for storage, check to see if entry is added
-only if CRON_MIN is set
+only if CRON_MIN is set. Alpine image comes with a default crontab, but these directories are empty.
 
     $ docker build --tag freshrss_alpine --network host -f Docker/Dockerfile-Alpine .
     ...
