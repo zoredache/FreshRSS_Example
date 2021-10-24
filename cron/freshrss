@@ -1,0 +1,4 @@
+@monthly root php cli/db-optimize.php --user zoredache
+@weekly root php cli/export-opml-for-user.php --user zoredache > /var/www/FreshRSS/data/extensions-data/zoredache_export.opml
+@hourly root php php cli/actualize-user.php --user zoredache
+0 */4 * * * root php php cli/actualize-user.php --user otheruser

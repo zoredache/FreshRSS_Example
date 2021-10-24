@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  freshrss-db:
+    image: mariadb:10.5-focal
+    container_name: freshrss-db
+    hostname: freshrss-db
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-freshrss}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-freshrss}
+      MYSQL_USER: ${MYSQL_USER:-freshrss}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-freshrss}
+
+  freshrss-app:
+    image: freshrss/freshrss:edge
+    container_name: freshrss-app
+    hostname: freshrss-app
+    restart: unless-stopped
+    ports:
+      - "${EXPOSED_PORT:-8080}:80"
+    depends_on:
+      - freshrss-db
+    volumes:
+      - data:/var/www/FreshRSS/data
+      - extensions:/var/www/FreshRSS/extensions
+    environment:
+      TZ: Etc/UTC
+
+  freshrss-cron:
+    image: freshrss/freshrss:edge
+    container_name: freshrss-cron
+    hostname: freshrss-cron
+    restart: unless-stopped
+    depends_on:
+      - freshrss-db
+    volumes:
+      - data:/var/www/FreshRSS/data
+      - extensions:/var/www/FreshRSS/extensions
+      - ./cron:/etc/cron.d
+      - ./exports:data/export-data
+    environment:
+      TZ: Etc/UTC
+    command: cron -f
+
+volumes:
+  mysql-data:
+  data:
+  extensions:
